@@ -43,7 +43,7 @@ public class LoginMenu implements IMenu {
                         break;
                     case "2":
                         User user = signup();
-                        userService.register(user);
+                     //   userService.register(user);
                         new MainMenu(user).start();
                         break;
                     case "x":

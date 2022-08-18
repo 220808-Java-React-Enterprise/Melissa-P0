@@ -37,9 +37,9 @@ public class UserService {
         }
     }
 
-    public void register(User user)  {
-            userDAO.save(user);
-    }
+//    public void register(User user)  {
+//            userDAO.save(user);
+//    }
 
     public List<String> getAllUsernames() {
         return userDAO.getAllUsernames();
