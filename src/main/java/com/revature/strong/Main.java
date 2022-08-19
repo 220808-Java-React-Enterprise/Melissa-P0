@@ -11,10 +11,10 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] arg) throws IOException, SQLException {
-       /* //dependency injection
+       //dependency injection
         UserDAO userDAO = new UserDAO();
         UserService userService = new UserService(userDAO);
-        new LoginMenu(userService).start();*/
+        new LoginMenu(userService).start();
 
         try {
             System.out.println(ConnectionFactory.getInstance().getConnection());

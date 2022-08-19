@@ -2,27 +2,28 @@ package com.revature.strong.models;
 
 public class User {
     private String username;
-    private String password;
+    private String userpassword;
     private String id;
-    private String role = "Customer";
+    private Boolean coach;
+    private String coach_id;
 
     public User(){
 
     }
 
-    public User(String username, String password, String id){
+    public User(String username, String userpassword, String id, Boolean coach){
         this.username = username;
-        this.password = password;
+        this.userpassword = userpassword;
         this.id = id;
-        this.role = role;
+        this.coach = coach;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    public User(String username, String userpassword, String id, Boolean coach, String coach_id) {
+        this.username = username;
+        this.userpassword = userpassword;
+        this.id = id;
+        this.coach = coach;
+        this.coach_id = coach_id;
     }
 
     public String getId() {
@@ -33,10 +34,6 @@ public class User {
         this.id = id;
     }
 
-    public String toFileString() {
-        return id + ":" + username + ":" + password + ":" + role + "\n";
-    }
-
     public String getUsername() {
         return username;
     }
@@ -45,21 +42,38 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUserPassword() {
+        return userpassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserPassword(String password) {
+        this.userpassword = userpassword;
+    }
+
+    public Boolean getCoach() {
+        return coach;
+    }
+
+    public void setCoach(Boolean coach) {
+        this.coach = coach;
+    }
+
+    public String getCoach_id() {
+        return coach_id;
+    }
+
+    public void setCoach_id(String coach_id) {
+        this.coach_id = coach_id;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", userpassword='" + userpassword + '\'' +
                 ", id='" + id + '\'' +
-                ", role='" + role + '\'' +
+                ", coach=" + coach +
+                ", coach_id='" + coach_id + '\'' +
                 '}';
     }
 }

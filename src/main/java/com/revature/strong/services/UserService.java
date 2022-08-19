@@ -37,12 +37,14 @@ public class UserService {
         }
     }
 
-//    public void register(User user)  {
-//            userDAO.save(user);
-//    }
+    public void register(User user)  {
+            userDAO.save(user);
+    }
 
-    public List<String> getAllUsernames() {
-        return userDAO.getAllUsernames();
+    public boolean isDuplicateUsername(String username) {
+        if (userDAO.getUsername(username) != null) throw new InvalidUserException("\nSorry, " +
+                username + " already has been taken :(");
+        return false;
     }
 
 }

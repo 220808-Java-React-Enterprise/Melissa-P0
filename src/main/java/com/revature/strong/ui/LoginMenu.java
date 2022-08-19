@@ -14,7 +14,7 @@ import java.util.UUID;
 public class LoginMenu implements IMenu {
     private final UserService userService;
 
-    public LoginMenu(UserService userService){
+    public LoginMenu(UserService userService) {
         this.userService = userService;
     }
 
@@ -43,7 +43,7 @@ public class LoginMenu implements IMenu {
                         break;
                     case "2":
                         User user = signup();
-                     //   userService.register(user);
+                        userService.register(user);
                         new MainMenu(user).start();
                         break;
                     case "x":
@@ -59,9 +59,7 @@ public class LoginMenu implements IMenu {
 
     private void login() {
         System.out.println("needs to be implemented!");
-        List<String> usernames = userService.getAllUsernames();
 
-        System.out.println(usernames.contains("melissa"));
 
     }
 
@@ -69,7 +67,10 @@ public class LoginMenu implements IMenu {
         Scanner scan = new Scanner(System.in);
         String username = "";
         String password = "";
-        User user = new User();
+        String password2 = "";
+        Boolean coach = false;
+        User user;
+        String coachId = null;
 
         exit:
         {
@@ -82,6 +83,7 @@ public class LoginMenu implements IMenu {
 
                         try {
                             userService.isValidUsername(username);
+                            userService.isDuplicateUsername(username);
                             break usernameExit;
                         } catch (InvalidUserException e) {
                             System.out.println(e.getMessage());
@@ -92,10 +94,11 @@ public class LoginMenu implements IMenu {
                 passwordExit:
                 {
                     while (true) {
-                        System.out.println("Please enter you password: ");
-                        password = scan.nextLine();
-
                         try {
+                            System.out.println("Please enter your password: ");
+                            password = scan.nextLine();
+
+
                             userService.isValidPassword(password);
                             break passwordExit;
                         } catch (InvalidUserException e) {
@@ -113,7 +116,7 @@ public class LoginMenu implements IMenu {
                         switch (scan.nextLine().toLowerCase()) {
                             case "y":
                                 System.out.println("Creating Account.....");
-                                User newUser = new User(username, password, UUID.randomUUID().toString());
+                                User newUser = new User(username, password, UUID.randomUUID().toString(), coach, coachId);
                                 return newUser;
                             case "n":
                                 System.out.println("oh dear!");
