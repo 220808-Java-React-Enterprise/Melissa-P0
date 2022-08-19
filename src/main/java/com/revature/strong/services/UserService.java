@@ -21,7 +21,6 @@ public class UserService {
     public void isValidUsername(String username) {
         if (!username.matches("^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9]+(?<![_.])$")) {
             throw new InvalidUserException("\nUsername not Valid.\n*Username can only contain alphanumerics" +
-                    "\n*Username must start with a capital letter" +
                     "\n*Username must contain a lowercase letter" +
                     "\n*Username must contain a number" +
                     "\n*Username must be 8-20 characters long");

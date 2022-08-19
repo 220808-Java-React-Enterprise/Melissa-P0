@@ -78,16 +78,22 @@ public class LoginMenu implements IMenu {
                 usernameExit:
                 {
                     while (true) {
-                        System.out.println("\nPlease enter your username: ");
+                        System.out.println("\nPlease enter your username: \nOr x to exit");
                         username = scan.nextLine();
 
-                        try {
-                            userService.isValidUsername(username);
-                            userService.isDuplicateUsername(username);
-                            break usernameExit;
-                        } catch (InvalidUserException e) {
-                            System.out.println(e.getMessage());
+                        if (username.toLowerCase().equals("x")) {
+                            start();
+                        }else {
+
+                            try {
+                                userService.isValidUsername(username);
+                                userService.isDuplicateUsername(username);
+                                break usernameExit;
+                            } catch (InvalidUserException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
+
                     }
                 }
 
@@ -95,15 +101,18 @@ public class LoginMenu implements IMenu {
                 {
                     while (true) {
                         try {
-                            System.out.println("Please enter your password: ");
+                            System.out.println("Please enter your password: \nOr x to exit");
                             password = scan.nextLine();
-
+                            if (password.toLowerCase().equals("x")) {
+                                start();
+                            }
 
                             userService.isValidPassword(password);
                             break passwordExit;
                         } catch (InvalidUserException e) {
                             System.out.println(e.getMessage());
                         }
+
                     }
                 }
 
