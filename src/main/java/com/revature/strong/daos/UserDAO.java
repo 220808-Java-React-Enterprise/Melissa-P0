@@ -1,6 +1,7 @@
 package com.revature.strong.daos;
 
 import com.revature.strong.models.User;
+import com.revature.strong.utils.custom_exceptions.InvalidSQLException;
 import com.revature.strong.utils.database.ConnectionFactory;
 
 import java.io.*;
@@ -23,7 +24,8 @@ public class UserDAO implements CrudDAO<User>{
             ps.setString(5, obj.getCoach_id());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("An error occurred when trying to save to the database");
+            e.printStackTrace();
+            throw new InvalidSQLException("An error occurred when trying to save to the database");
         }
     }
 
@@ -56,7 +58,23 @@ public class UserDAO implements CrudDAO<User>{
             if (rs.next()) return rs.getString("username");
 
         } catch (SQLException e) {
-            throw new RuntimeException("An error occurred when trying to save to the database");
+            throw new InvalidSQLException("An error occurred when trying to save to the database");
+        }
+
+        return null;
+    }
+
+    public User getUserByUsernameAndPassword(String username, String password){
+        try (Connection con = ConnectionFactory.getInstance().getConnection()) {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE username = ? AND userpassword = ?");
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) return new User(rs.getString("username"), rs.getString("userpassword"), rs.getString("id"), rs.getBoolean("coach"), rs.getString("coach_id"));
+
+        } catch (SQLException e) {
+            throw new InvalidSQLException("An error occurred when trying to save to the database");
         }
 
         return null;

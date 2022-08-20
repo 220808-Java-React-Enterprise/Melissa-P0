@@ -1,15 +1,13 @@
 package com.revature.strong.ui;
 
+import com.revature.strong.daos.UserDAO;
 import com.revature.strong.models.User;
 import com.revature.strong.services.UserService;
 import com.revature.strong.utils.custom_exceptions.InvalidUserException;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 public class LoginMenu implements IMenu {
     private final UserService userService;
@@ -40,12 +38,17 @@ public class LoginMenu implements IMenu {
                 switch (userInput) {
                     case "1":
                         login();
-                        break;
+                        start();    //Implement better - after login with username and password it SHOULD NOT take you back to start() only if you can't remember username and password
+                        break exit;
                     case "2":
                         User user = signup();
-                        userService.register(user);
-                        new MainMenu(user).start();
-                        break;
+                        if (user == null) {
+                            start();
+                        } else {
+                            userService.register(user);
+                            new MainMenu(user, new UserService(new UserDAO())).start();
+                        }
+                        break exit;
                     case "x":
                         System.out.println("Thank you for visiting, come again!");
                         break exit;
@@ -58,9 +61,32 @@ public class LoginMenu implements IMenu {
     }
 
     private void login() {
-        System.out.println("needs to be implemented!");
+        Scanner scan = new Scanner(System.in);
+        String username = "";
+        String password = "";
 
+        System.out.println("\nLog in:");
 
+        exit:
+        {
+            while (true) {
+                    System.out.println("\nPlease enter your username: ");  //IMPLEMENT: x to break out of loop if they don't know username or login
+                    username = scan.nextLine();
+
+                    System.out.println("\nPlease enter your password: \nIf you forgot your username or password enter x to exit");
+                    password = scan.nextLine();
+                if (password.toLowerCase().equals("x")) break exit;
+
+                    try {
+                        User user = userService.login(username, password);
+                        if (user.getCoach().equals(Boolean.TRUE)) new CoachMenu(user, new UserService(new UserDAO())).start();
+                        else new MainMenu(user, new UserService(new UserDAO())).start();
+                        break exit;
+                    } catch (InvalidUserException e) {
+                        System.out.println(e.getMessage());
+                    }
+            }
+        }
     }
 
     private User signup() {
@@ -75,16 +101,35 @@ public class LoginMenu implements IMenu {
         exit:
         {
             while (true) {
+
+                coachExit:
+                {
+                    while (true) {
+                        System.out.println("Are you a coach? y/n");
+
+                        switch (scan.nextLine().toLowerCase()) {
+                            case "y":
+                                coach = true;
+                                break coachExit;
+                            case "n":
+                                coach = false;
+                                break coachExit;
+                            default:
+                                System.out.println("\nInvalid input, please try again");
+                                break;
+                        }
+                    }
+                }
+
+
                 usernameExit:
                 {
                     while (true) {
-                        System.out.println("\nPlease enter your username: \nOr x to exit");
+                        System.out.println("Please enter your username: \nOr x to exit");
                         username = scan.nextLine();
-
                         if (username.toLowerCase().equals("x")) {
-                            start();
-                        }else {
-
+                            return null;
+                        } else {
                             try {
                                 userService.isValidUsername(username);
                                 userService.isDuplicateUsername(username);
@@ -93,7 +138,6 @@ public class LoginMenu implements IMenu {
                                 System.out.println(e.getMessage());
                             }
                         }
-
                     }
                 }
 
@@ -104,15 +148,14 @@ public class LoginMenu implements IMenu {
                             System.out.println("Please enter your password: \nOr x to exit");
                             password = scan.nextLine();
                             if (password.toLowerCase().equals("x")) {
-                                start();
+                                return null;
+                            } else {
+                                userService.isValidPassword(password);
+                                break passwordExit;
                             }
-
-                            userService.isValidPassword(password);
-                            break passwordExit;
                         } catch (InvalidUserException e) {
                             System.out.println(e.getMessage());
                         }
-
                     }
                 }
 
@@ -120,7 +163,7 @@ public class LoginMenu implements IMenu {
                 {
                     while (true) {
                         System.out.println("\nIs this correct? (y/n):");
-                        System.out.println("Username: " + username + "\nPassword: " + password);
+                        System.out.println("Username: " + username + "\nPassword: " + password + "\nCoach: " + coach);
 
                         switch (scan.nextLine().toLowerCase()) {
                             case "y":

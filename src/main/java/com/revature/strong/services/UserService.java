@@ -40,10 +40,21 @@ public class UserService {
             userDAO.save(user);
     }
 
+    public User login(String username, String userpassword){
+        User user = userDAO.getUserByUsernameAndPassword(username, userpassword);
+        if (user == null) throw new InvalidUserException("\nIncorrect username or password :(");
+        return user;
+    }
+
     public boolean isDuplicateUsername(String username) {
         if (userDAO.getUsername(username) != null) throw new InvalidUserException("\nSorry, " +
                 username + " already has been taken :(");
         return false;
+    }
+
+    public boolean isSamePassword(String userpassword, String password2){
+        if (!userpassword.equals(password2)) throw new InvalidUserException("\nPassword do not match :(");
+        return true;
     }
 
 }
