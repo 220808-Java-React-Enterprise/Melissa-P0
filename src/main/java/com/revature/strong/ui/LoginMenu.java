@@ -1,7 +1,9 @@
 package com.revature.strong.ui;
 
+import com.revature.strong.daos.EquipmentDOA;
 import com.revature.strong.daos.UserDAO;
 import com.revature.strong.models.User;
+import com.revature.strong.services.EquipmentService;
 import com.revature.strong.services.UserService;
 import com.revature.strong.utils.custom_exceptions.InvalidUserException;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
@@ -46,7 +48,7 @@ public class LoginMenu implements IMenu {
                             start();
                         } else {
                             userService.register(user);
-                            new MainMenu(user, new UserService(new UserDAO())).start();
+                            new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA())).start();
                         }
                         break exit;
                     case "x":
@@ -80,7 +82,7 @@ public class LoginMenu implements IMenu {
                     try {
                         User user = userService.login(username, password);
                         if (user.getCoach().equals(Boolean.TRUE)) new CoachMenu(user, new UserService(new UserDAO())).start();
-                        else new MainMenu(user, new UserService(new UserDAO())).start();
+                        else new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA())).start();
                         break exit;
                     } catch (InvalidUserException e) {
                         System.out.println(e.getMessage());

@@ -1,18 +1,31 @@
 package com.revature.strong.models;
 
+import java.math.BigDecimal;
+
 public class Equipment {
     private String id;
     private String name;
-    private int price;
+    private BigDecimal price;
+    private String description;
+
 
     public Equipment() {
 
     }
 
-    public Equipment(String id, String name, int price) {
+    public Equipment(String id, String name, String description, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getId() {
@@ -31,11 +44,11 @@ public class Equipment {
         this.name = name;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -44,6 +57,7 @@ public class Equipment {
         return "Equipment{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", price=" + price +
                 '}';
     }
