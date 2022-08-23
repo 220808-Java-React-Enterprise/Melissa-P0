@@ -89,36 +89,37 @@ public class MainMenu implements IMenu {
                 Equipment equip = equipmentService.findEquipmentByID(input);
                 System.out.println("Did you select " + equip.getName() + "?\n y/n");
                 input = scan.nextLine();
-                if (input.toLowerCase().equals("y")){
+                if (input.toLowerCase().equals("y")) {
                     System.out.println("How many: ");
                     input = scan.nextLine();
                     int quantity = Integer.parseInt(input);
                     int temp = (rand.nextInt(1000) + 1);
                     String id = String.valueOf(temp);
-                    if (quantity%1 ==0){
+                    if (quantity % 1 == 0) {
                         BigDecimal price = equip.getPrice();
                         BigDecimal total = BigDecimal.valueOf(quantity).multiply(price);
                         BigDecimal quant = BigDecimal.valueOf(quantity);
-                        toBuy.add(new OrderDetails(id,user.getId(), today, equip.getId(), equip.getName(), quant, total));
+                        toBuy.add(new OrderDetails(id, user.getId(), today, equip.getId(), equip.getName(), quant, total));
 
                         System.out.println("Item: " + equip.getName() + " has been added to your cart.  Your total is: $" + total);
                         subTotal = subTotal.add(total);
                         System.out.println("Would you like to keep shopping?\ny/n");
                         input = scan.nextLine();
-                        if(input.toLowerCase().equals("y")){
+                        if (input.toLowerCase().equals("y")) {
                         } else {
                             System.out.println("Thank you for shopping with Strong!\n" +
                                     "\nYour final order is: ");
-                            for(OrderDetails e : toBuy){
+                            for (OrderDetails e : toBuy) {
                                 System.out.println("Item: " + e.getEqname() + "|| Qty: " + e.getQuantity());
                                 orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), today, e.getEquipment_id(), e.getEqname(), e.getQuantity(), e.getSubtotal()));
-                                supplyservice.updateByEqname(e.getEqname(), e.getQuantity());
+                                supplyservice.updateByEqname(e.getEqname(), e.getQuantity(), false);
                             }
                             System.out.println("Your order has been submitted\n" +
                                     "Your total is: $" + subTotal + "\nGoodbye!");
                             break exit;
                         }
                     }
+                }
                     else if (input.toLowerCase().equals("n")){
                         System.out.println("Please try again");
                         break;
@@ -127,7 +128,7 @@ public class MainMenu implements IMenu {
                         break;
                     }
                 }
-            }
+
     }
 
     public void orderHistory(){

@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SupplyDAO implements CrudDAO<Supply> {
@@ -33,21 +34,55 @@ public class SupplyDAO implements CrudDAO<Supply> {
 
     @Override
     public Supply getById(String id) {
+        try (Connection con = ConnectionFactory.getInstance().getConnection()) {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM supply WHERE id = ?");
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) return new Supply(rs.getString("id"), rs.getString("eqname"), rs.getBigDecimal("quantity"), rs.getString("store_id"));
+
+        } catch (SQLException e) {
+            throw new InvalidSQLException("An error occurred when trying to save to the database");
+        }
+
         return null;
     }
 
     @Override
     public List<Supply> getAll() {
-        return null;
+
+        List<Supply> supply = new ArrayList<>();
+
+        try (Connection con = ConnectionFactory.getInstance().getConnection()) {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM supply");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Supply sup = new Supply(rs.getString("id"), rs.getString("eqname"), rs.getBigDecimal("quantity"), rs.getString("store_id"));
+                supply.add(sup);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new InvalidSQLException("An error occurred when trying to retrieve from the database");
+        }
+
+        return supply;
     }
 
-    public void updateByEqname(String eqname, BigDecimal quantity){
+    public void updateByEqname(String eqname, BigDecimal quantity, Boolean replenish){
         try (Connection con = ConnectionFactory.getInstance().getConnection()) {
 
             BigDecimal currQuantity = getQuantity(eqname);
+            BigDecimal newVal = BigDecimal.valueOf(0);
 
             PreparedStatement ps = con.prepareStatement("UPDATE supply SET quantity = ? WHERE eqname = ?");
-            BigDecimal newVal = currQuantity.subtract(quantity);
+
+            if(replenish.equals(Boolean.FALSE)) {
+                newVal = currQuantity.subtract(quantity);
+            } else {
+                newVal = currQuantity.add(quantity);
+            }
 
             ps.setBigDecimal(1, newVal);
             ps.setString(2, eqname);

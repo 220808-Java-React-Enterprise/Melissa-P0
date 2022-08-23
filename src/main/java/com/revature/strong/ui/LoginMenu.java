@@ -50,9 +50,12 @@ public class LoginMenu implements IMenu {
                         User user = signup();
                         if (user == null) {
                             start();
-                        } else {
+                        } else if (user.getCoach().equals(Boolean.FALSE)) {
                             userService.register(user); //implement to take to Coach menu if it's a coach
                             new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new OrderDetailService(new OrderDetailDAO()), new SupplyService(new SupplyDAO())).start();
+                        } else {
+                            userService.register(user);
+                            new CoachMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new SupplyService(new SupplyDAO())).start();
                         }
                         break exit;
                     case "x":
@@ -85,7 +88,7 @@ public class LoginMenu implements IMenu {
 
                     try {
                         User user = userService.login(username, password);
-                        if (user.getCoach().equals(Boolean.TRUE)) new CoachMenu(user, new UserService(new UserDAO())).start();
+                        if (user.getCoach().equals(Boolean.TRUE)) new CoachMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new SupplyService(new SupplyDAO())).start();
                         else new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new OrderDetailService(new OrderDetailDAO()), new SupplyService(new SupplyDAO())).start();
                         break exit;
                     } catch (InvalidUserException e) {
