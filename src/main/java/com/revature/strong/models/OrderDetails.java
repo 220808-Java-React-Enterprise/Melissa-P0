@@ -1,23 +1,35 @@
 package com.revature.strong.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class OrderDetails {
 
     private String id;
     private String userid;
+    private Date oddate;
     private String equipment_id;
     private String eqname;
     private BigDecimal quantity;
     private BigDecimal subtotal;
 
-    public OrderDetails(String id, String userid, String equipment_id, String eqname, BigDecimal quantity, BigDecimal subtotal) {
+    public OrderDetails(String id, String userid, Date oddate, String equipment_id, String eqname, BigDecimal quantity, BigDecimal subtotal) {
         this.id = id;
         this.userid = userid;
         this.equipment_id = equipment_id;
         this.eqname = eqname;
         this.quantity = quantity;
         this.subtotal = subtotal;
+        this.oddate = oddate;
+    }
+
+    public Date getOddate() {
+        return oddate;
+    }
+
+    public void setOddate(Date oddate) {
+        this.oddate = oddate;
     }
 
     public String getId() {
@@ -73,6 +85,7 @@ public class OrderDetails {
         return "OrderDetails{" +
                 "id='" + id + '\'' +
                 ", userid='" + userid + '\'' +
+                ", oddate=" + oddate +
                 ", equipment_id='" + equipment_id + '\'' +
                 ", eqname='" + eqname + '\'' +
                 ", quantity=" + quantity +

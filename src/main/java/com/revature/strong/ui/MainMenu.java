@@ -6,9 +6,11 @@ import com.revature.strong.models.OrderDetails;
 import com.revature.strong.models.User;
 import com.revature.strong.services.EquipmentService;
 import com.revature.strong.services.OrderDetailService;
+import com.revature.strong.services.SupplyService;
 import com.revature.strong.services.UserService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 public class MainMenu implements IMenu {
@@ -16,12 +18,14 @@ public class MainMenu implements IMenu {
     private final UserService userService;
     private final EquipmentService equipmentService;
     private final OrderDetailService orderdetailservice;
+    private final SupplyService supplyservice;
 
-    public MainMenu(User user, UserService userService, EquipmentService equipmentService, OrderDetailService orderdetailservice) {
+    public MainMenu(User user, UserService userService, EquipmentService equipmentService, OrderDetailService orderdetailservice, SupplyService supplyservice) {
         this.user = user;
         this.userService = userService;
         this.equipmentService = equipmentService;
         this.orderdetailservice = orderdetailservice;
+        this.supplyservice = supplyservice;
     }
 
     @Override
@@ -48,10 +52,7 @@ public class MainMenu implements IMenu {
                         System.out.println("3 needs to be implemented");
                         break;
                     case "4":
-                        System.out.println("Order History:\n");
-                        for (OrderDetails e : orderdetailservice.findOrdersByUserId(user.getId())){
-                            System.out.println("Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
-                        }
+                        orderHistory();
                         break;
                     case "x":
                         System.out.println("Enjoy your workout! Come again!");
@@ -72,6 +73,9 @@ public class MainMenu implements IMenu {
         BigDecimal subTotal = BigDecimal.valueOf(0);
         OrderDetailDAO orderDAO = new OrderDetailDAO();
         OrderDetailService orderservice = new OrderDetailService(orderDAO);
+        long millis = System.currentTimeMillis();
+        Date today = new Date(millis);
+        java.sql.Date sqlDate = new java.sql.Date(today.getTime());
 
 
         exit:
@@ -94,7 +98,7 @@ public class MainMenu implements IMenu {
                         BigDecimal price = equip.getPrice();
                         BigDecimal total = BigDecimal.valueOf(quantity).multiply(price);
                         BigDecimal quant = BigDecimal.valueOf(quantity);
-                        toBuy.add(new OrderDetails(id,user.getId(), equip.getId(), equip.getName(), quant, total));
+                        toBuy.add(new OrderDetails(id,user.getId(), today, equip.getId(), equip.getName(), quant, total));
 
                         System.out.println("Item: " + equip.getName() + " has been added to your cart.  Your total is: $" + total);
                         subTotal = subTotal.add(total);
@@ -106,7 +110,8 @@ public class MainMenu implements IMenu {
                                     "\nYour final order is: ");
                             for(OrderDetails e : toBuy){
                                 System.out.println("Item: " + e.getEqname() + "|| Qty: " + e.getQuantity());
-                                orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), e.getEquipment_id(), e.getEqname(), e.getQuantity(), e.getSubtotal()));
+                                orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), today, e.getEquipment_id(), e.getEqname(), e.getQuantity(), e.getSubtotal()));
+                                supplyservice.updateByEqname(e.getEqname(), e.getQuantity());
                             }
                             System.out.println("Your order has been submitted\n" +
                                     "Your total is: $" + subTotal + "\nGoodbye!");
@@ -125,5 +130,46 @@ public class MainMenu implements IMenu {
 
             }
 
+    }
+
+    public void orderHistory(){
+        Scanner scan = new Scanner(System.in);
+        String input = "";
+
+
+        exit:
+            while(true){
+                System.out.println("How would you like to view your Order History?\n[1]Order History\n[2]Order History by date\n[3]Order History by price\n[X]Exit");
+                input = scan.nextLine();
+
+                switch(input){
+                    case "1":
+                        System.out.println("Order History:\n");
+                        for (OrderDetails e : orderdetailservice.findOrdersByUserId(user.getId())){
+                            System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        }
+                        System.out.println();
+                        break;
+                    case "2":
+                        System.out.println("Order History by Date:\n");
+                        for (OrderDetails e : orderdetailservice.sortOrdersByDate(user.getId())){
+                            System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        }
+                        System.out.println();
+                        break;
+                    case "3":
+                        System.out.println("Order History by price:\n");
+                        for (OrderDetails e : orderdetailservice.sortOrdersByPrice(user.getId())){
+                            System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        }
+                        System.out.println();
+                        break;
+                    case "x":
+                        break exit;
+                    default:
+                        System.out.println("Invalid entry, Please try again");
+                        break;
+                }
+            }
     }
 }

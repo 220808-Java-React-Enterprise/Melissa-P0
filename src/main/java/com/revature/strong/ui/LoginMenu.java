@@ -2,10 +2,12 @@ package com.revature.strong.ui;
 
 import com.revature.strong.daos.EquipmentDOA;
 import com.revature.strong.daos.OrderDetailDAO;
+import com.revature.strong.daos.SupplyDAO;
 import com.revature.strong.daos.UserDAO;
 import com.revature.strong.models.User;
 import com.revature.strong.services.EquipmentService;
 import com.revature.strong.services.OrderDetailService;
+import com.revature.strong.services.SupplyService;
 import com.revature.strong.services.UserService;
 import com.revature.strong.utils.custom_exceptions.InvalidUserException;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
@@ -50,7 +52,7 @@ public class LoginMenu implements IMenu {
                             start();
                         } else {
                             userService.register(user); //implement to take to Coach menu if it's a coach
-                            new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new OrderDetailService(new OrderDetailDAO())).start();
+                            new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new OrderDetailService(new OrderDetailDAO()), new SupplyService(new SupplyDAO())).start();
                         }
                         break exit;
                     case "x":
@@ -84,7 +86,7 @@ public class LoginMenu implements IMenu {
                     try {
                         User user = userService.login(username, password);
                         if (user.getCoach().equals(Boolean.TRUE)) new CoachMenu(user, new UserService(new UserDAO())).start();
-                        else new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new OrderDetailService(new OrderDetailDAO())).start();
+                        else new MainMenu(user, new UserService(new UserDAO()), new EquipmentService(new EquipmentDOA()), new OrderDetailService(new OrderDetailDAO()), new SupplyService(new SupplyDAO())).start();
                         break exit;
                     } catch (InvalidUserException e) {
                         System.out.println(e.getMessage());
