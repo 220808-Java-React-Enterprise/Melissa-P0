@@ -103,7 +103,7 @@ public class MainMenu implements IMenu {
                                     "\nYour final order is: ");
                             for(OrderDetails e : toBuy){
                                 System.out.println("Item: " + e.getEqname() + "|| Qty: " + e.getQuantity());
-                                orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), equip.getId(), equip.getName(), quant, total));
+                                orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), e.getEquipment_id(), e.getEqname(), e.getQuantity(), e.getSubtotal()));
                             }
                             System.out.println("Your order has been submitted\n" +
                                     "Your total is: $" + subTotal + "\nGoodbye!");
