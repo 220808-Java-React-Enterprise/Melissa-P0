@@ -17,3 +17,23 @@ With Strong you can email your trainer specific goals and struggles and they wil
 - Order histories have the option to be sorted by date (latest to oldest and vice versa) or cost (least expensive
   to most expensive)
 - Coaches are able to replenish inventory
+
+## Technology
+
+ - Written in Java 8
+ - Apache Maven
+ - PostgreSQL
+ - JUnit
+ - Mockito
+
+## Roles
+ - Client
+ - Coach (Admin)
+
+## Future Development
+ - Coach and client can exchange messages
+ - Coach can send written workout plans to client
+ - Delivery Dates on Orders
+
+## Contributors
+ - Melissa Clark
