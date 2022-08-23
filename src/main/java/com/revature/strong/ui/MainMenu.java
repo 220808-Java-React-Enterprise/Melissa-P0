@@ -15,23 +15,24 @@ public class MainMenu implements IMenu {
     private final User user;
     private final UserService userService;
     private final EquipmentService equipmentService;
+    private final OrderDetailService orderdetailservice;
 
-    public MainMenu(User user, UserService userService, EquipmentService equipmentService) {
+    public MainMenu(User user, UserService userService, EquipmentService equipmentService, OrderDetailService orderdetailservice) {
         this.user = user;
         this.userService = userService;
         this.equipmentService = equipmentService;
+        this.orderdetailservice = orderdetailservice;
     }
 
     @Override
     public void start() {
         Scanner scan = new Scanner(System.in);
         String input = "";
-
+        System.out.println("\nWelcome to Your STRONGest Self, " + user.getUsername() + "!\n");
 
         exit:
             while(true) {
 
-                System.out.println("\nWelcome to Your STRONGest Self, " + user.getUsername() + "!\n");
                 System.out.println("Please select from the menu below:\n \n[1]Shop\n[2]View messages from Coach\n[3]View workout plan\n[4}Order History\n[X]Log out\n");
                 input = scan.nextLine();
 
@@ -43,12 +44,14 @@ public class MainMenu implements IMenu {
                     case "2":
                         System.out.println("2 needs to be implemented");
                         break;
-
                     case "3":
                         System.out.println("3 needs to be implemented");
                         break;
                     case "4":
-                        System.out.println("4 needs to be implemented");
+                        System.out.println("Order History:\n");
+                        for (OrderDetails e : orderdetailservice.findOrdersByUserId(user.getId())){
+                            System.out.println("Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        }
                         break;
                     case "x":
                         System.out.println("Enjoy your workout! Come again!");
@@ -79,7 +82,7 @@ public class MainMenu implements IMenu {
                 }
                 input = scan.nextLine();
                 Equipment equip = equipmentService.findEquipmentByID(input);
-                System.out.println("Did you select " + equip.getName() + "? y/n\n");
+                System.out.println("Did you select " + equip.getName() + "?\n y/n");
                 input = scan.nextLine();
                 if (input.toLowerCase().equals("y")){
                     System.out.println("How many: ");
@@ -95,7 +98,7 @@ public class MainMenu implements IMenu {
 
                         System.out.println("Item: " + equip.getName() + " has been added to your cart.  Your total is: $" + total);
                         subTotal = subTotal.add(total);
-                        System.out.println("Would you like to keep shopping? y/n");
+                        System.out.println("Would you like to keep shopping?\ny/n");
                         input = scan.nextLine();
                         if(input.toLowerCase().equals("y")){
                         } else {

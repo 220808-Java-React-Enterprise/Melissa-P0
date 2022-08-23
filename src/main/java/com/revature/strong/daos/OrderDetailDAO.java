@@ -1,5 +1,6 @@
 package com.revature.strong.daos;
 
+import com.revature.strong.models.Equipment;
 import com.revature.strong.models.OrderDetails;
 import com.revature.strong.utils.custom_exceptions.InvalidSQLException;
 import com.revature.strong.utils.database.ConnectionFactory;
@@ -7,7 +8,9 @@ import com.revature.strong.utils.database.ConnectionFactory;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDetailDAO implements CrudDAO<OrderDetails> {
@@ -48,5 +51,25 @@ public class OrderDetailDAO implements CrudDAO<OrderDetails> {
     @Override
     public List<OrderDetails> getAll() {
         return null;
+    }
+
+    public List<OrderDetails> getAllById(String id){
+        List<OrderDetails> orders = new ArrayList<>();
+
+        try (Connection con = ConnectionFactory.getInstance().getConnection()) {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM orderdetails WHERE user_id = ?");
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                OrderDetails ord = new OrderDetails(rs.getString("id"), rs.getString("user_id"), rs.getString("equipment_id"), rs.getString("eqname"), rs.getBigDecimal("quantity"), rs.getBigDecimal("subtotal"));
+                orders.add(ord);
+            }
+
+        } catch (SQLException e) {
+            throw new InvalidSQLException("An error occurred when trying to retrieve from the database");
+        }
+
+        return orders;
     }
 }

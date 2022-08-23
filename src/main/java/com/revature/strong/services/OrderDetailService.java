@@ -1,9 +1,12 @@
 package com.revature.strong.services;
 
 import com.revature.strong.daos.OrderDetailDAO;
+import com.revature.strong.models.Equipment;
 import com.revature.strong.models.OrderDetails;
+import com.revature.strong.utils.custom_exceptions.InvalidUserException;
 
 import java.io.IOException;
+import java.util.List;
 
 public class OrderDetailService {
 
@@ -15,6 +18,13 @@ public class OrderDetailService {
 
     public void saveOrder(OrderDetails order){
         orderdetailDAO.save(order);
+    }
+
+    public List<OrderDetails> findOrdersByUserId(String userId){
+        List<OrderDetails> orderdets = orderdetailDAO.getAllById(userId);
+        if (orderdets == null) throw new InvalidUserException("Sorry there are no order for this user");
+
+        return orderdets;
     }
 
 
