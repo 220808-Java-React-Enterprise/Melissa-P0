@@ -160,6 +160,9 @@ public class LoginMenu implements IMenu {
                                 return null;
                             } else {
                                 userService.isValidPassword(password);
+                                System.out.println("\nRe enter password: ");
+                                password2 = scan.nextLine();
+                                userService.isSamePassword(password, password2);
                                 break passwordExit;
                             }
                         } catch (InvalidUserException e) {

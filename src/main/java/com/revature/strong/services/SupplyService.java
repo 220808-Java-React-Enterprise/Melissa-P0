@@ -22,6 +22,11 @@ public class SupplyService implements CrudDAO<Supply> {
         supplyDAO.updateByEqname(eqname, quantity, replenish);
     }
 
+    public BigDecimal getQuantityByEqname(String eqname){
+        BigDecimal quantity = supplyDAO.getQuantity(eqname);
+        return quantity;
+    }
+
     @Override
     public void save(Supply obj) throws IOException {
 

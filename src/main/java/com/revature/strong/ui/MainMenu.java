@@ -8,6 +8,7 @@ import com.revature.strong.services.EquipmentService;
 import com.revature.strong.services.OrderDetailService;
 import com.revature.strong.services.SupplyService;
 import com.revature.strong.services.UserService;
+import com.revature.strong.utils.custom_exceptions.InvalidUserException;
 
 import javax.xml.bind.SchemaOutputResolver;
 import java.math.BigDecimal;
@@ -85,9 +86,9 @@ public class MainMenu implements IMenu {
                 for (Equipment e : equipmentService.getAllEquipment()){
                     System.out.println("Id: " + e.getId() + " || Name: " + e.getName() + " || Price: $" + e.getPrice());
                 }
-                input = scan.nextLine();
+                input = scan.nextLine();  //Implement validation - is input an actual Equipment id?!!!
                 Equipment equip = equipmentService.findEquipmentByID(input);
-                System.out.println("Did you select " + equip.getName() + "?\n y/n");
+                System.out.println("Did you select " + equip.getName() + "?\ny/n");
                 input = scan.nextLine();
                 if (input.toLowerCase().equals("y")) {
                     System.out.println("How many: ");
@@ -99,24 +100,30 @@ public class MainMenu implements IMenu {
                         BigDecimal price = equip.getPrice();
                         BigDecimal total = BigDecimal.valueOf(quantity).multiply(price);
                         BigDecimal quant = BigDecimal.valueOf(quantity);
-                        toBuy.add(new OrderDetails(id, user.getId(), today, equip.getId(), equip.getName(), quant, total));
-
-                        System.out.println("Item: " + equip.getName() + " has been added to your cart.  Your total is: $" + total);
-                        subTotal = subTotal.add(total);
-                        System.out.println("Would you like to keep shopping?\ny/n");
-                        input = scan.nextLine();
-                        if (input.toLowerCase().equals("y")) {
+                        BigDecimal amtAvail = supplyservice.getQuantityByEqname(equip.getName());
+                        BigDecimal amtLeft = amtAvail.subtract(quant);
+                        if(amtLeft.compareTo(BigDecimal.ZERO) < 0){
+                            System.out.println("\nSorry we don't have enough in stock!  Please message your coach to restock!\n");
                         } else {
-                            System.out.println("Thank you for shopping with Strong!\n" +
-                                    "\nYour final order is: ");
-                            for (OrderDetails e : toBuy) {
-                                System.out.println("Item: " + e.getEqname() + "|| Qty: " + e.getQuantity());
-                                orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), today, e.getEquipment_id(), e.getEqname(), e.getQuantity(), e.getSubtotal()));
-                                supplyservice.updateByEqname(e.getEqname(), e.getQuantity(), false);
+                            toBuy.add(new OrderDetails(id, user.getId(), today, equip.getId(), equip.getName(), quant, total));
+
+                            System.out.println("Item: " + equip.getName() + " has been added to your cart.  Your total is: $" + total);
+                            subTotal = subTotal.add(total);
+                            System.out.println("Would you like to keep shopping?\ny/n");
+                            input = scan.nextLine();
+                            if (input.toLowerCase().equals("y")) {
+                            } else {
+                                System.out.println("Thank you for shopping with Strong!\n" +
+                                        "\nYour final order is: ");
+                                for (OrderDetails e : toBuy) {
+                                    System.out.println("Item: " + e.getEqname() + "|| Qty: " + e.getQuantity());
+                                    orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), today, e.getEquipment_id(), e.getEqname(), e.getQuantity(), e.getSubtotal()));
+                                    supplyservice.updateByEqname(e.getEqname(), e.getQuantity(), false);
+                                }
+                                System.out.println("Your order has been submitted\n" +
+                                        "Your total is: $" + subTotal + "\nGoodbye!\n");
+                                break exit;
                             }
-                            System.out.println("Your order has been submitted\n" +
-                                    "Your total is: $" + subTotal + "\nGoodbye!");
-                            break exit;
                         }
                     }
                 }
@@ -144,8 +151,13 @@ public class MainMenu implements IMenu {
                 switch(input){
                     case "1":
                         System.out.println("Order History:\n");
-                        for (OrderDetails e : orderdetailservice.findOrdersByUserId(user.getId())){
-                            System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        try{
+                            for (OrderDetails e : orderdetailservice.findOrdersByUserId(user.getId())){
+                                System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                            }
+
+                            }catch(InvalidUserException e){
+                            System.out.println("Sorry there are no orders for this user");
                         }
                         System.out.println();
                         break;
@@ -153,7 +165,9 @@ public class MainMenu implements IMenu {
                         System.out.println("Order History by Date:\n");
                         System.out.println("[1]Ascending\n[2]Descending");
                         String choice = scan.nextLine();
+                        try{
                         List<OrderDetails> ordersList = orderdetailservice.sortOrdersByDate(user.getId());
+
                         if (choice.equals("1")) {
                             for (OrderDetails e : ordersList) {
                                 System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
@@ -164,23 +178,32 @@ public class MainMenu implements IMenu {
                             for (OrderDetails e : ordersList) {
                                 System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
                             }
+                            System.out.println();
+                        }
+                        }catch (InvalidUserException e){
+                            System.out.println("Sorry there are no orders for this user\n");
                         }
                         break;
                     case "3":
                         System.out.println("Order History by price:\n");
                         System.out.println("[1]Ascending\n[2]Descending");
                         String choiceprice = scan.nextLine();
-                        List<OrderDetails> ordersListPrice = orderdetailservice.sortOrdersByPrice(user.getId());
-                        if (choiceprice.equals("1")) {
-                            for (OrderDetails e : ordersListPrice) {
-                                System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        try {
+                            List<OrderDetails> ordersListPrice = orderdetailservice.sortOrdersByPrice(user.getId());
+                            if (choiceprice.equals("1")) {
+                                for (OrderDetails e : ordersListPrice) {
+                                    System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                                }
+                                System.out.println();
+                            } else {
+                                Collections.reverse(ordersListPrice);
+                                for (OrderDetails e : ordersListPrice) {
+                                    System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                                }
+                                System.out.println();
                             }
-                            System.out.println();
-                        }else {
-                            Collections.reverse(ordersListPrice);
-                            for (OrderDetails e : ordersListPrice) {
-                                System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
-                            }
+                        } catch (InvalidUserException e){
+                            System.out.println("Sorry there are no orders for this user\n");
                         }
                         break;
                     case "x":

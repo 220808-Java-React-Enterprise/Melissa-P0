@@ -22,21 +22,21 @@ public class OrderDetailService {
 
     public List<OrderDetails> findOrdersByUserId(String userId){
         List<OrderDetails> orderdets = orderdetailDAO.getAllById(userId);
-        if (orderdets == null) throw new InvalidUserException("Sorry there are no orders for this user");
+        if (orderdets.isEmpty() == true) throw new InvalidUserException("Sorry there are no orders for this user");
 
         return orderdets;
     }
 
     public List<OrderDetails> sortOrdersByPrice(String userId){
         List<OrderDetails> orderdets = orderdetailDAO.sortOrdersByPrice(userId);
-        if (orderdets == null) throw new InvalidUserException("Sorry there are no orders for this user");
+        if (orderdets.isEmpty() == true) throw new InvalidUserException("Sorry there are no orders for this user");
 
         return orderdets;
     }
 
     public List<OrderDetails> sortOrdersByDate(String userId){
         List<OrderDetails> orderdets = orderdetailDAO.sortOrdersByDate(userId);
-        if (orderdets == null) throw new InvalidUserException("Sorry there are no orders for this user");
+        if (orderdets.isEmpty() == true) throw new InvalidUserException("Sorry there are no orders for this user");
 
         return orderdets;
     }

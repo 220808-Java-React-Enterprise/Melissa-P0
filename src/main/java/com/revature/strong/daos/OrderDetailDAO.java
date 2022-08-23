@@ -72,6 +72,7 @@ public class OrderDetailDAO implements CrudDAO<OrderDetails> {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new InvalidSQLException("An error occurred when trying to retrieve from the database");
         }
 

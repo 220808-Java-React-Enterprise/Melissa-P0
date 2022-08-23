@@ -78,11 +78,11 @@ public class SupplyDAO implements CrudDAO<Supply> {
 
             PreparedStatement ps = con.prepareStatement("UPDATE supply SET quantity = ? WHERE eqname = ?");
 
-            if(replenish.equals(Boolean.FALSE)) {
-                newVal = currQuantity.subtract(quantity);
-            } else {
-                newVal = currQuantity.add(quantity);
-            }
+                if (replenish.equals(Boolean.FALSE)) {
+                    newVal = currQuantity.subtract(quantity);
+                } else {
+                    newVal = currQuantity.add(quantity);
+                }
 
             ps.setBigDecimal(1, newVal);
             ps.setString(2, eqname);

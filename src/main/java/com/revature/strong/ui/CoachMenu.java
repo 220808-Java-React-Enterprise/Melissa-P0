@@ -87,7 +87,6 @@ public class CoachMenu implements IMenu {
                     System.out.println("Invalid input, please try again");
                     break;
                 }
-
             }
     }
 }
