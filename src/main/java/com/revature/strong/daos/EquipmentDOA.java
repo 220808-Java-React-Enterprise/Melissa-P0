@@ -56,20 +56,19 @@ public class EquipmentDOA implements CrudDAO<Equipment> {
         return equipment;
     }
 
-    /*public Equipment getEquipmentById(String id){
+    public Equipment getEquipmentById(String id){
         try (Connection con = ConnectionFactory.getInstance().getConnection()) {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM users WHERE username = ? AND userpassword = ?");
-            ps.setString(1, username);
-            ps.setString(2, password);
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM equipment WHERE id = ?");
+            ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) return new User(rs.getString("username"), rs.getString("userpassword"), rs.getString("id"), rs.getBoolean("coach"), rs.getString("coach_id"));
+            if (rs.next()) return new Equipment(rs.getString("id"), rs.getString("eqname"), rs.getString("description"), rs.getBigDecimal("price"));
 
         } catch (SQLException e) {
             throw new InvalidSQLException("An error occurred when trying to save to the database");
         }
 
         return null;
-    }*/
+    }
 }
 
