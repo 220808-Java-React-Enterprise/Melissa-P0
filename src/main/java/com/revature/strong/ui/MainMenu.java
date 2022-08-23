@@ -9,6 +9,7 @@ import com.revature.strong.services.OrderDetailService;
 import com.revature.strong.services.SupplyService;
 import com.revature.strong.services.UserService;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -125,11 +126,8 @@ public class MainMenu implements IMenu {
                         System.out.println("Invalid Input.  Try again");
                         break;
                     }
-
                 }
-
             }
-
     }
 
     public void orderHistory(){
@@ -152,17 +150,37 @@ public class MainMenu implements IMenu {
                         break;
                     case "2":
                         System.out.println("Order History by Date:\n");
-                        for (OrderDetails e : orderdetailservice.sortOrdersByDate(user.getId())){
-                            System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        System.out.println("[1]Ascending\n[2]Descending");
+                        String choice = scan.nextLine();
+                        List<OrderDetails> ordersList = orderdetailservice.sortOrdersByDate(user.getId());
+                        if (choice.equals("1")) {
+                            for (OrderDetails e : ordersList) {
+                                System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                            }
+                            System.out.println();
+                        } else {
+                            Collections.reverse(ordersList);
+                            for (OrderDetails e : ordersList) {
+                                System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                            }
                         }
-                        System.out.println();
                         break;
                     case "3":
                         System.out.println("Order History by price:\n");
-                        for (OrderDetails e : orderdetailservice.sortOrdersByPrice(user.getId())){
-                            System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                        System.out.println("[1]Ascending\n[2]Descending");
+                        String choiceprice = scan.nextLine();
+                        List<OrderDetails> ordersListPrice = orderdetailservice.sortOrdersByPrice(user.getId());
+                        if (choiceprice.equals("1")) {
+                            for (OrderDetails e : ordersListPrice) {
+                                System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                            }
+                            System.out.println();
+                        }else {
+                            Collections.reverse(ordersListPrice);
+                            for (OrderDetails e : ordersListPrice) {
+                                System.out.println("Date: " + e.getOddate() + " || Item: " + e.getEqname() + " || Qty: " + e.getQuantity() + " || total: $" + e.getSubtotal());
+                            }
                         }
-                        System.out.println();
                         break;
                     case "x":
                         break exit;
