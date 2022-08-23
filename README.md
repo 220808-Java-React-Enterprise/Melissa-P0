@@ -8,7 +8,7 @@ With Strong you can email your trainer specific goals and struggles and they wil
 
 ## Functionality
 
-- Create an accoutn (add a new customer)
+- Create an account (add a new customer)
 - search customers by name (for Coaches)
 - display details of an order
 - view order history of customer
