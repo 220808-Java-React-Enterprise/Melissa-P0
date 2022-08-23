@@ -130,7 +130,6 @@ public class LoginMenu implements IMenu {
                     }
                 }
 
-
                 usernameExit:
                 {
                     while (true) {
@@ -192,7 +191,6 @@ public class LoginMenu implements IMenu {
                     }
                 }
             }
-
         }
     }
 }

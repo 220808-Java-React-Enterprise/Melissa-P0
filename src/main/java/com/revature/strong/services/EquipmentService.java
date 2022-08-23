@@ -15,7 +15,6 @@ public class EquipmentService {
     }
 
     public List<Equipment> getAllEquipment() {
-
         return equipmentDOA.getAll();
     }
 

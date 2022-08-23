@@ -18,22 +18,24 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public void isValidUsername(String username) {
+    public boolean isValidUsername(String username) {
         if (!username.matches("^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9]+(?<![_.])$")) {
             throw new InvalidUserException("\nUsername not Valid.\n*Username can only contain alphanumerics" +
                     "\n*Username must contain a lowercase letter" +
                     "\n*Username must contain a number" +
                     "\n*Username must be 8-20 characters long");
         }
+        return true;
     }
 
-    public void isValidPassword(String password) {
+    public boolean isValidPassword(String password) {
         if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
             throw new InvalidUserException("\nPassword not Valid.\n*Password must have a minimum of 8 character" +
                     "\n*Password must have at least one letter" +
                     "\n*Password must have at least one number");
 
         }
+        return true;
     }
 
     public void register(User user)  {

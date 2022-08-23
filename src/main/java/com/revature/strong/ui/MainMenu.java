@@ -64,7 +64,6 @@ public class MainMenu implements IMenu {
                         break;
                 }
             }
-
     }
 
     public void shop(){
@@ -135,7 +134,6 @@ public class MainMenu implements IMenu {
                         break;
                     }
                 }
-
     }
 
     public void orderHistory(){
