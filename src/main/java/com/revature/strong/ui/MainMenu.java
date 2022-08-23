@@ -1,9 +1,11 @@
 package com.revature.strong.ui;
 
+import com.revature.strong.daos.OrderDetailDAO;
 import com.revature.strong.models.Equipment;
 import com.revature.strong.models.OrderDetails;
 import com.revature.strong.models.User;
 import com.revature.strong.services.EquipmentService;
+import com.revature.strong.services.OrderDetailService;
 import com.revature.strong.services.UserService;
 
 import java.math.BigDecimal;
@@ -65,11 +67,13 @@ public class MainMenu implements IMenu {
         List<OrderDetails> toBuy = new ArrayList<>();
         Random rand = new Random();
         BigDecimal subTotal = BigDecimal.valueOf(0);
+        OrderDetailDAO orderDAO = new OrderDetailDAO();
+        OrderDetailService orderservice = new OrderDetailService(orderDAO);
 
 
         exit:
             while(true){
-                System.out.println("Please select an ID to add to your cart\n");
+                System.out.println("Please select an ID to add to your cart");
                 for (Equipment e : equipmentService.getAllEquipment()){
                     System.out.println("Id: " + e.getId() + " || Name: " + e.getName() + " || Price: $" + e.getPrice());
                 }
@@ -99,6 +103,7 @@ public class MainMenu implements IMenu {
                                     "\nYour final order is: ");
                             for(OrderDetails e : toBuy){
                                 System.out.println("Item: " + e.getEqname() + "|| Qty: " + e.getQuantity());
+                                orderservice.saveOrder(new OrderDetails(e.getId(), user.getId(), equip.getId(), equip.getName(), quant, total));
                             }
                             System.out.println("Your order has been submitted\n" +
                                     "Your total is: $" + subTotal + "\nGoodbye!");
