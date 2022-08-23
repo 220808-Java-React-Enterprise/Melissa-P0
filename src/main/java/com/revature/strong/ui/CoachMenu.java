@@ -8,6 +8,7 @@ import com.revature.strong.services.SupplyService;
 import com.revature.strong.services.UserService;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Scanner;
 
 public class CoachMenu implements IMenu {
@@ -36,6 +37,7 @@ public class CoachMenu implements IMenu {
 
                 switch(input){
                     case "1":
+                        viewClients();
                         break;
                     case "2":
                         break;
@@ -88,5 +90,58 @@ public class CoachMenu implements IMenu {
                     break;
                 }
             }
+    }
+
+    public void viewClients(){
+        List<User> users = userService.getAllUsers();
+        String input = "";
+        String client = "";
+        Scanner scan = new Scanner(System.in);
+
+        exit:
+        while(true){
+            System.out.println("Please select from the menu below:\n[1]View All\n[2]View all Coaches\n[3]View all Clients\n[4]Search Client by name\n[X]Exit");
+            input = scan.nextLine();
+            switch(input){
+                case "1":
+                    for(User u : users){
+                        System.out.println("Username: " + u.getUsername());
+                    }
+                    System.out.println();
+                    break;
+                case "2":
+                    for(User u : users){
+                        if(u.getCoach() == true) System.out.println("Username: " + u.getUsername());
+                    }
+                    System.out.println();
+                    break;
+                case "3":
+                    for(User u : users){
+                        if(u.getCoach() == false) System.out.println("Username: " + u.getUsername());
+                    }
+                    System.out.println();
+                    break;
+                case "4":
+                    System.out.println("Clients name: ");
+                    client = scan.nextLine();
+                    User temp = userService.getUserByUsername(client);
+                    if(temp ==null){
+                        System.out.println("Sorry user doesn't exist");
+                    } else{
+                        System.out.println("Id: " + temp.getId() + " Name: " + temp.getUsername());
+                    }
+                    System.out.println();
+                    break;
+                case "x":
+                    System.out.println("Keep crushing it! See you later!");
+                    break exit;
+                default:
+                    System.out.println("Invalid input, Please try again");
+                    break ;
+
+            }
+
+
+        }
     }
 }
